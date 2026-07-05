@@ -25,12 +25,20 @@ impl Cube {
         ];
 
         let indice_pattern: Vec<Option<usize>> = vec![
-            Some(0), Some(1), Some(3), None, Some(0), Some(2), Some(3), None, // top face
-            Some(0), Some(4), Some(5), None, Some(0), Some(1), Some(5), None, // back face
-            Some(0), Some(4), Some(6), None, Some(0), Some(2), Some(6), None, // right face
-            Some(7), Some(6), Some(2), None, Some(7), Some(3), Some(2), None, // front face
-            Some(7), Some(6), Some(4), None, Some(7), Some(5), Some(4), None, // bottom face
-            Some(7), Some(5), Some(1), None, Some(7), Some(3), Some(1), None, // left face
+            Some(0), Some(1), None,
+            Some(1), Some(3), None,
+            Some(3), Some(2), None,
+            Some(2), Some(0), None,
+
+            Some(4), Some(5), None,
+            Some(5), Some(7), None,
+            Some(7), Some(6), None,
+            Some(6), Some(4), None,
+
+            Some(0), Some(4), None,
+            Some(1), Some(5), None,
+            Some(2), Some(6), None,
+            Some(3), Some(7), None,
         ];
 
         Self {
