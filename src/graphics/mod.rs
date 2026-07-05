@@ -1,4 +1,4 @@
-mod camera;
+pub mod camera;
 
 use crate::math::vec;
 use crate::global_constants;
@@ -7,7 +7,11 @@ use macroquad::color;
 
 pub trait Renderable {
     fn vertices(&self) -> &[vec::Vec3<i32>];
-    fn indices(&self) -> &[u32];
+    fn indices(&self) -> &[Option<usize>];
+
+    fn color(&self) -> Color;
+
+    fn thickness(&self) -> f32;
 }
 
 pub fn render(obj: &impl Renderable, cam: &camera::Camera) {
@@ -19,8 +23,16 @@ pub fn render(obj: &impl Renderable, cam: &camera::Camera) {
             .collect();
 
     for v in vertices.iter_mut() {
-        v.x = ( v.x * n[0] ) / ( v.z + n[0] ) - cam.camera_pos.x as f32;
-        v.y = ( v.y * n[1] ) / ( v.z + n[1] ) - cam.camera_pos.x as f32;
+        v.x = ( v.x * cam.n[0] ) / ( v.z + cam.n[0] ) - cam.camera_pos.x as f32;
+        v.y = ( v.y * cam.n[1] ) / ( v.z + cam.n[1] ) - cam.camera_pos.x as f32;
         v.z = 0.0
+    }
+
+    let mut prev: Option<usize> = None;
+    for i in indices.iter() {
+        if let Some(pre) = prev && let Some(index) = i {
+            draw_line(vertices[pre].x, vertices[pre].y, vertices[*index].x, vertices[*index].y, obj.thickness(), obj.color());
+        }
+        prev = *i;
     }
 }

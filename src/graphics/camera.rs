@@ -1,6 +1,7 @@
 use crate::global_constants::SCREEN_RES;
 use crate::math::vec::*;
 
+#[derive(Debug)]
 pub struct Camera {
     pub camera_pos: Vec3<i32>,
     pub fov: [f32; 2],
