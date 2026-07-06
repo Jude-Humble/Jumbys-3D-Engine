@@ -11,6 +11,8 @@ use crate::math::*;
 use crate::controls::*;
 use macroquad::color;
 use macroquad::prelude::*;
+use std::thread;
+use std::time::Duration;
 
 fn window_conf() -> Conf {
     Conf {
@@ -23,6 +25,7 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    let dt = (get_frame_time() * 100.0) as u64;
 
     let mut test: Cube = Cube::new(10, color::WHITE, 1.0);
 
@@ -35,5 +38,6 @@ async fn main() {
         graphics::render(&test, &cam);
         test.mov_obj();
         next_frame().await;
+        thread::sleep(Duration::from_millis(30 - dt));
     }
 }
