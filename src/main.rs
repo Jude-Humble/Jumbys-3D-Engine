@@ -2,18 +2,21 @@ pub mod graphics;
 pub mod global_constants;
 pub mod textures;
 pub mod math;
+pub mod controls;
 
 use crate::graphics::*;
+use crate::global_constants::*;
 use crate::textures::cube::*;
 use crate::math::*;
+use crate::controls::*;
 use macroquad::color;
 use macroquad::prelude::*;
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "Jumby 3D".to_owned(),
-        window_width: 1920,
-        window_height: 1080,
+        window_width: global_constants::SCREEN_RES[0],
+        window_height: global_constants::SCREEN_RES[1],
         ..Default::default()
     }
 }
@@ -30,7 +33,7 @@ async fn main() {
     loop {
         clear_background(color::BLACK);
         graphics::render(&test, &cam);
-        test.mov(vec::Vec3::new(0, 0, 0));
+        test.mov_obj();
         next_frame().await;
     }
 }

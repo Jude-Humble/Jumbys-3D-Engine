@@ -1,6 +1,8 @@
+use macroquad::prelude::*;
 use macroquad::color;
 use crate::math::vec::Vec3;
 use crate::graphics;
+use crate::controls::*;
 
 #[derive(Debug)]
 pub struct Cube {
@@ -49,7 +51,7 @@ impl Cube {
         }
     }
 
-    pub fn mov (&mut self, direction: Vec3<i32>) {
+    pub fn debug_mov (&mut self, direction: Vec3<i32>) {
         for v in self.vertices.iter_mut() {
             v.x += direction.x;
             v.y += direction.y;
@@ -70,4 +72,27 @@ impl crate::graphics::Renderable for Cube {
     fn color(&self) -> color::Color { self.color }
 
     fn thickness(&self) -> f32 {self.thickness }
+}
+
+impl crate::controls::Controllable for Cube {
+    fn mov_obj(&mut self) {
+        if is_key_down(KeyCode::W) {
+            self.debug_mov(Vec3::new(0,0,1));
+        }
+        if is_key_down(KeyCode::S) {
+            self.debug_mov(Vec3::new(0,0,-1));
+        }
+        if is_key_down(KeyCode::A) {
+            self.debug_mov(Vec3::new(-1,0,0));
+        }
+        if is_key_down(KeyCode::D) {
+            self.debug_mov(Vec3::new(1,0,0));
+        }
+        if is_key_down(KeyCode::E) {
+            self.debug_mov(Vec3::new(0,-1,0));
+        }
+        if is_key_down(KeyCode::Q) {
+            self.debug_mov(Vec3::new(0,1,0));
+        }
+    }
 }
