@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 use macroquad::color;
+use crate::math::vec::*;
 use crate::math::vec::Vec3;
 use crate::graphics;
 use crate::controls::*;
@@ -51,11 +52,19 @@ impl Cube {
         }
     }
 
-    pub fn debug_mov (&mut self, direction: Vec3<i32>) {
+    pub fn debug_mov (&mut self, direction: Vec3<i32:::
         for v in self.vertices.iter_mut() {
             v.x += direction.x;
             v.y += direction.y;
             v.z += direction.z;
+        }
+    }
+
+    pub fn debug_rot (&mut self, direction: u8, degree: f32) {
+        let mat = RotMat::new(direction, degree);
+        for v in self.vertices.iter_mut() {
+            let to_mult = Vec3::new()
+            mat.multiply(v);
         }
     }
 }
@@ -94,5 +103,9 @@ impl crate::controls::Controllable for Cube {
         if is_key_down(KeyCode::Q) {
             self.debug_mov(Vec3::new(0,1,0));
         }
+    }
+
+    fn rot(&mut self) {
+
     }
 }

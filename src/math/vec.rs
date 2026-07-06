@@ -40,3 +40,40 @@ where
         }
     }
 }
+
+
+#[derive(Debug)]
+pub struct RotMat {
+    mat: [[f32; 3]; 3],
+}
+
+impl RotMat {
+    pub fn new(id: u8, theta: f32) -> Self {
+        match id {
+            0 => Self { mat: [
+                [ 1.0 , 0.0         , 0.0          ],
+                [ 0.0 , theta.cos() , -theta.sin() ],
+                [ 0.0 , theta.sin() , theta.cos()  ],
+            ]},
+            1 => Self { mat: [
+                [ theta.cos()  , 0.0 , theta.sin() ],
+                [ 0.0          , 1.0 , 0.0         ],
+                [ -theta.sin() , 0.0 , theta.cos() ],
+            ]},
+            2 => Self { mat: [
+                [ theta.cos() , -theta.sin() , 0.0 ],
+                [ theta.sin() , theta.cos()  , 0.0 ],
+                [ 0.0         , 0.0          , 1.0 ],
+            ]},
+            _ => panic!("Unkown Rotation Matrix ID!"),
+        }
+    }
+
+    pub fn multiply(&self, other: &mut Vec3<f32>) {
+        *other = Vec3 {
+            x: self.mat[0][0] * other.x + self.mat[0][1] * other.y + self.mat[0][2] * other.z,
+            y: self.mat[1][0] * other.x + self.mat[1][1] * other.y + self.mat[1][2] * other.z,
+            z: self.mat[2][0] * other.x + self.mat[2][1] * other.y + self.mat[2][2] * other.z,
+        }
+    }
+}
