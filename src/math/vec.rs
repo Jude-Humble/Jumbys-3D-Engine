@@ -26,6 +26,21 @@ where
     }
 }
 
+use std::ops::Sub;
+impl<T> Sub for Vec3<T>
+where
+    T: Sub<Output = T>,
+{
+    type Output = Self;
+    fn sub(self, other: Self) -> Self::Output {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+        }
+    }
+}
+
 use std::ops::Add;
 impl<T> Add for Vec3<T>
 where
@@ -70,10 +85,16 @@ impl RotMat {
     }
 
     pub fn multiply(&self, other: &mut Vec3<f32>) {
-        *other = Vec3 {
+        let resultant = Vec3 {
             x: self.mat[0][0] * other.x + self.mat[0][1] * other.y + self.mat[0][2] * other.z,
             y: self.mat[1][0] * other.x + self.mat[1][1] * other.y + self.mat[1][2] * other.z,
             z: self.mat[2][0] * other.x + self.mat[2][1] * other.y + self.mat[2][2] * other.z,
-        }
+        };
+
+        *other = Vec3::new(
+            resultant.x,
+            resultant.y,
+            resultant.z,
+        );
     }
 }

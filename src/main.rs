@@ -27,7 +27,7 @@ fn window_conf() -> Conf {
 async fn main() {
     let dt = (get_frame_time() * 100.0) as u64;
 
-    let mut test: Cube = Cube::new(10, color::WHITE, 1.0);
+    let mut test: Cube = Cube::new(10.0, color::WHITE, 1.0);
 
     let init_cam_pos = vec::Vec3::new(0, 0, -80);
     let mut cam = graphics::camera::Camera::new(init_cam_pos, [90.0, 60.0]);
@@ -37,6 +37,7 @@ async fn main() {
         clear_background(color::BLACK);
         graphics::render(&test, &cam);
         test.mov_obj();
+        test.rot();
         next_frame().await;
         thread::sleep(Duration::from_millis(30 - dt));
     }

@@ -7,7 +7,7 @@ use macroquad::color;
 use crate::global_constants::SCREEN_RES;
 
 pub trait Renderable {
-    fn vertices(&self) -> &[vec::Vec3<i32>];
+    fn vertices(&self) -> &[vec::Vec3<f32>];
     fn indices(&self) -> &[Option<usize>];
 
     fn color(&self) -> Color;

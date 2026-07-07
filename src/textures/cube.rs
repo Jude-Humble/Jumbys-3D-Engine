@@ -7,15 +7,16 @@ use crate::controls::*;
 
 #[derive(Debug)]
 pub struct Cube {
-    pub vertices: Vec<Vec3<i32>>,
+    pub vertices: Vec<Vec3<f32>>,
     pub indices: Vec<Option<usize>>,
+    origin: Vec3<f32>,
     color: color::Color,
     thickness: f32,
 }
 
 impl Cube {
 
-    pub fn new(side_length: i32, color: color::Color, thickness: f32) -> Self {
+    pub fn new(side_length: f32, color: color::Color, thickness: f32) -> Self {
         let init_cube_size = vec![
             Vec3::new(  side_length,  side_length,  side_length ), // top-right-back     #0
             Vec3::new(  side_length, -side_length,  side_length ), // top-left-back      #1
@@ -49,28 +50,31 @@ impl Cube {
             indices: indice_pattern,
             color,
             thickness,
+            origin: Vec3::new(0.0,0.0,0.0),
         }
     }
 
-    pub fn debug_mov (&mut self, direction: Vec3<i32:::
+    pub fn debug_mov (&mut self, direction: Vec3<f32>) {
         for v in self.vertices.iter_mut() {
             v.x += direction.x;
             v.y += direction.y;
             v.z += direction.z;
         }
+        self.origin = self.origin + direction;
     }
 
     pub fn debug_rot (&mut self, direction: u8, degree: f32) {
         let mat = RotMat::new(direction, degree);
         for v in self.vertices.iter_mut() {
-            let to_mult = Vec3::new()
-            mat.multiply(v);
+            let mut to_rot = *v - self.origin;
+            mat.multiply(&mut to_rot);
+            *v = to_rot;
         }
     }
 }
 
 impl crate::graphics::Renderable for Cube {
-    fn vertices(&self) -> &[Vec3<i32>] {
+    fn vertices(&self) -> &[Vec3<f32>] {
         self.vertices.as_slice()
     }
 
@@ -86,26 +90,42 @@ impl crate::graphics::Renderable for Cube {
 impl crate::controls::Controllable for Cube {
     fn mov_obj(&mut self) {
         if is_key_down(KeyCode::W) {
-            self.debug_mov(Vec3::new(0,0,1));
+            self.debug_mov(Vec3::new(0.0,0.0,1.0));
         }
         if is_key_down(KeyCode::S) {
-            self.debug_mov(Vec3::new(0,0,-1));
+            self.debug_mov(Vec3::new(0.0,0.0,-1.0));
         }
         if is_key_down(KeyCode::A) {
-            self.debug_mov(Vec3::new(-1,0,0));
+            self.debug_mov(Vec3::new(-1.0,0.0,0.0));
         }
         if is_key_down(KeyCode::D) {
-            self.debug_mov(Vec3::new(1,0,0));
+            self.debug_mov(Vec3::new(1.0,0.0,0.0));
         }
         if is_key_down(KeyCode::E) {
-            self.debug_mov(Vec3::new(0,-1,0));
+            self.debug_mov(Vec3::new(0.0,-1.0,0.0));
         }
         if is_key_down(KeyCode::Q) {
-            self.debug_mov(Vec3::new(0,1,0));
+            self.debug_mov(Vec3::new(0.0,1.0,0.0));
         }
     }
 
     fn rot(&mut self) {
-
+        if is_key_down(KeyCode::J) {
+            self.debug_rot(0, -0.1);
+        }
+        if is_key_down(KeyCode::L) {
+            self.debug_rot(0, 0.1);
+        }
+        if is_key_down(KeyCode::I) {
+            self.debug_rot(1, -0.1);
+        }
+        if is_key_down(KeyCode::K) {
+        }
+        if is_key_down(KeyCode::U) {
+            self.debug_rot(2, -0.1);
+        }
+        if is_key_down(KeyCode::O) {
+            self.debug_rot(2, 0.1);
+        }
     }
 }
