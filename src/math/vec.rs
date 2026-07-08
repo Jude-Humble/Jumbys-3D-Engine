@@ -56,7 +56,7 @@ where
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct Quaternion {
     x: f32,
     y: f32,

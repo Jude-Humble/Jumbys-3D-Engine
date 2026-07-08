@@ -10,6 +10,7 @@ pub struct Cube {
     pub vertices: Vec<Vec3<f32>>,
     pub indices: Vec<Option<usize>>,
     pub origin: Vec3<f32>,
+    pub orientation: Quaternion,
     color: color::Color,
     thickness: f32,
 }
@@ -45,9 +46,12 @@ impl Cube {
             Some(3), Some(7), None,
         ];
 
+        let init_orientation = Quaternion::new(0.0, 0.0, 0.0, 1.0);
+
         Self {
             vertices: init_cube_size,
             indices: indice_pattern,
+            orientation: init_orientation,
             color,
             thickness,
             origin: Vec3::new(0.0,0.0,0.0),
@@ -65,9 +69,10 @@ impl Cube {
 
     pub fn debug_rot (&mut self, direction: u8, angle: f32) {
         for v in self.vertices.iter_mut() {
-            *v = Quaternion::rotate(*v, angle, direction);
+            let local = *v - self.origin;
+            let rotated = Quaternion::rotate(local, angle, direction);
+            *v = self.origin + rotated;
         }
-        self.origin = Quaternion::rotate(self.origin, angle, direction); 
     }
 }
 
