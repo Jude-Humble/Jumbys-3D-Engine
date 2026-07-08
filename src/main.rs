@@ -37,7 +37,8 @@ async fn main() {
         clear_background(color::BLACK);
         graphics::render(&test, &cam);
         test.mov_obj();
-        test.rot();
+        test.rotate();
+        println!("{:?}", test.origin);
         next_frame().await;
         thread::sleep(Duration::from_millis(30 - dt));
     }

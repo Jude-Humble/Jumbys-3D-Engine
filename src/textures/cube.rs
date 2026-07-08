@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use macroquad::color;
-use crate::math::vec::*;
+use crate::math::vec::Quaternion;
 use crate::math::vec::Vec3;
 use crate::graphics;
 use crate::controls::*;
@@ -9,7 +9,7 @@ use crate::controls::*;
 pub struct Cube {
     pub vertices: Vec<Vec3<f32>>,
     pub indices: Vec<Option<usize>>,
-    origin: Vec3<f32>,
+    pub origin: Vec3<f32>,
     color: color::Color,
     thickness: f32,
 }
@@ -63,13 +63,11 @@ impl Cube {
         self.origin = self.origin + direction;
     }
 
-    pub fn debug_rot (&mut self, direction: u8, degree: f32) {
-        let mat = RotMat::new(direction, degree);
+    pub fn debug_rot (&mut self, direction: u8, angle: f32) {
         for v in self.vertices.iter_mut() {
-            let mut to_rot = *v - self.origin;
-            mat.multiply(&mut to_rot);
-            *v = to_rot;
+            *v = Quaternion::rotate(*v, angle, direction);
         }
+        self.origin = Quaternion::rotate(self.origin, angle, direction); 
     }
 }
 
@@ -109,23 +107,24 @@ impl crate::controls::Controllable for Cube {
         }
     }
 
-    fn rot(&mut self) {
+    fn rotate(&mut self) {
         if is_key_down(KeyCode::J) {
-            self.debug_rot(0, -0.1);
+            self.debug_rot(0, 0.1);
         }
         if is_key_down(KeyCode::L) {
-            self.debug_rot(0, 0.1);
+            self.debug_rot(0, -0.1);
+        }
+        if is_key_down(KeyCode::K) {
+            self.debug_rot(1, 0.1);
         }
         if is_key_down(KeyCode::I) {
             self.debug_rot(1, -0.1);
         }
-        if is_key_down(KeyCode::K) {
-        }
         if is_key_down(KeyCode::U) {
-            self.debug_rot(2, -0.1);
+            self.debug_rot(2, 0.1);
         }
         if is_key_down(KeyCode::O) {
-            self.debug_rot(2, 0.1);
+            self.debug_rot(2, -0.1);
         }
     }
 }

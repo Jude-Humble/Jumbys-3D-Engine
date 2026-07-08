@@ -56,45 +56,81 @@ where
     }
 }
 
-
-#[derive(Debug)]
-pub struct RotMat {
-    mat: [[f32; 3]; 3],
+#[derive(Copy, Clone)]
+pub struct Quaternion {
+    x: f32,
+    y: f32,
+    z: f32,
+    w: f32,
 }
 
-impl RotMat {
-    pub fn new(id: u8, theta: f32) -> Self {
-        match id {
-            0 => Self { mat: [
-                [ 1.0 , 0.0         , 0.0          ],
-                [ 0.0 , theta.cos() , -theta.sin() ],
-                [ 0.0 , theta.sin() , theta.cos()  ],
-            ]},
-            1 => Self { mat: [
-                [ theta.cos()  , 0.0 , theta.sin() ],
-                [ 0.0          , 1.0 , 0.0         ],
-                [ -theta.sin() , 0.0 , theta.cos() ],
-            ]},
-            2 => Self { mat: [
-                [ theta.cos() , -theta.sin() , 0.0 ],
-                [ theta.sin() , theta.cos()  , 0.0 ],
-                [ 0.0         , 0.0          , 1.0 ],
-            ]},
-            _ => panic!("Unkown Rotation Matrix ID!"),
+impl Mul<Quaternion> for Quaternion {
+    type Output = Quaternion;
+
+    fn mul(self, rhs: Quaternion) -> Quaternion {
+        Quaternion {
+            w: self.w * rhs.w
+                - self.x * rhs.x
+                - self.y * rhs.y
+                - self.z * rhs.z,
+
+            x: self.w * rhs.x
+                + self.x * rhs.w
+                + self.y * rhs.z
+                - self.z * rhs.y,
+
+            y: self.w * rhs.y
+                - self.x * rhs.z
+                + self.y * rhs.w
+                + self.z * rhs.x,
+
+            z: self.w * rhs.z
+                + self.x * rhs.y
+                - self.y * rhs.x
+                + self.z * rhs.w,
+        }
+    }
+}
+
+impl Quaternion {
+    pub fn new (x: f32, y: f32, z: f32, w: f32) -> Self {
+        Self { x, y, z, w }
+    }
+
+    pub fn conjugate (&self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+            w: self.w,
         }
     }
 
-    pub fn multiply(&self, other: &mut Vec3<f32>) {
-        let resultant = Vec3 {
-            x: self.mat[0][0] * other.x + self.mat[0][1] * other.y + self.mat[0][2] * other.z,
-            y: self.mat[1][0] * other.x + self.mat[1][1] * other.y + self.mat[1][2] * other.z,
-            z: self.mat[2][0] * other.x + self.mat[2][1] * other.y + self.mat[2][2] * other.z,
-        };
-
-        *other = Vec3::new(
-            resultant.x,
-            resultant.y,
-            resultant.z,
-        );
+    pub fn rotation_quaternion (&self, t: f32) -> Self {
+        Self {
+            x: self.x * ( t / 2.0 ).sin(),
+            y: self.y * ( t / 2.0 ).sin(),
+            z: self.z * ( t / 2.0 ).sin(),
+            w: ( t / 2.0 ).cos(),
+        }
     }
+
+    pub fn rotate(v: Vec3<f32>, t: f32, id: u8) -> Vec3<f32> {
+        let mut q: Quaternion;
+        match id {
+            0 => q = Self::new(1.0, 0.0, 0.0, 0.0).rotation_quaternion(t),
+            1 => q = Self::new(0.0, 1.0, 0.0, 0.0).rotation_quaternion(t),
+            2 => q = Self::new(0.0, 0.0, 1.0, 0.0).rotation_quaternion(t),
+            _ => panic!("Err: Unknown ID provided for quaternion rotation!"),
+        }
+        let p = Self::new(v.x, v.y, v.z, 0.0);
+
+        let rotated = q.conjugate() * p * q;
+
+        Vec3 {
+            x: rotated.x,
+            y: rotated.y,
+            z: rotated.z,
+        }
+    } 
 }
